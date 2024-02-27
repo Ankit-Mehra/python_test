@@ -135,7 +135,8 @@ class PDFSectionExtractor:
         section_patterns = [self.compile_section_pattern(section) for section in sections]
         current_section_index = 0
         current_section_text = ""
-
+        text = ""
+        
         # start from the page after the table of contents
         for page_num in range(start_page, len(self.doc)):
             page = self.doc[page_num]
