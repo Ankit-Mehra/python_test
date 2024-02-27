@@ -135,7 +135,6 @@ class PDFSectionExtractor:
         section_patterns = [self.compile_section_pattern(section) for section in sections]
         current_section_index = 0
         current_section_text = ""
-        section_found_in_page = False
 
         # start from the page after the table of contents
         for page_num in range(start_page, len(self.doc)):
@@ -156,18 +155,13 @@ class PDFSectionExtractor:
                     current_section_index += 1
                     current_section_text = ""
                     text = text[next_match.start():]  # Update text to start from next section
-                    section_found_in_page = True
                 else:
                     page_processed = True
+                    current_section_text += text
 
-            if not section_found_in_page:
-                current_section_text += text
+        # Add the last section to the formatted data
+        formatted_data[sections[current_section_index]] = text
 
-            section_found_in_page = False  # Reset for next page
-
-        # Add the last section's text if any remaining
-        if current_section_text:
-            formatted_data[sections[current_section_index]] = current_section_text
         return formatted_data
 
     def save_data_to_json(self, data: dict, file_path: str)->None:
@@ -199,5 +193,5 @@ class PDFSectionExtractor:
             print(f"Unknown error occurred: {error}")
 
 if __name__ == "__main__":
-    extractor = PDFSectionExtractor("assets/assets/legal_codes/crpc.pdf")
-    extractor.extract_sections_to_json("assets/assets/legal_codes/crpc3.json")
+    extractor = PDFSectionExtractor("data/crpc.pdf")
+    extractor.extract_sections_to_json("data/crpc.json")
